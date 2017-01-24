@@ -8,6 +8,7 @@
 #include "interfaces/pluginsiteminterface.h"
 #include "interfaces/pluginproxyinterface.h"
 
+#include "pluginwidget.h"
 
 class MyPlugin : public QObject, public PluginsItemInterface
 {
@@ -24,14 +25,16 @@ public:
     QWidget *itemTipsWidget(const QString &itemKey);
     const QString itemContextMenu(const QString &itemKey);
     void invokedMenuItem(const QString &itemKey, const QString &menuId, const bool checked);
-    bool eventFilter(QObject *watched, QEvent *event);
+    //bool eventFilter(QObject *watched, QEvent *event);
     const QString itemCommand(const QString &itemKey);
 
 private slots:
     void update();
+    void requestContextMenu(const QString &itemKey);
 
 private:
-    QWidget *m_mainWidget;
+    //QWidget *m_mainWidget;
+    PluginWidget *m_mainWidget;
     QLabel *m_tipsLabel;
     QTimer *m_refershTimer;
 };

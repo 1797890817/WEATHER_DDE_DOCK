@@ -6,6 +6,7 @@
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QGridLayout>
+#include <QMessageBox>
 #define MYPLUGIN_KEY    "myplugin"
 
 QString city="",cityId="",swtips="",temp="",sw1="";
@@ -17,7 +18,7 @@ QDesktopWidget* desktop;
 
 MyPlugin::MyPlugin(QObject *parent) :
     QObject(parent),
-    m_mainWidget(new QLabel),
+    m_mainWidget(new PluginWidget),
     m_tipsLabel(new QLabel),
     m_refershTimer(new QTimer(this))
 {
@@ -34,12 +35,11 @@ MyPlugin::MyPlugin(QObject *parent) :
     window->setWindowTitle("中国天气预报");
     window->setFixedSize(500,220);
     //背景颜色
-    //QPalette p = window->palette();
-    //p.setColor(QPalette::Window,QColor(0,0,0));
-    //window->setPalette(p);
+    //QPalette plt = window->palette();
+    //plt.setColor(QPalette::Window,QColor(0,0,0));
+    //window->setPalette(plt);
     //居中
-    window->move((desktop->width() - window->width())/2, (desktop->height() - window->height())/2);
-    //window->setCentralWidget(widget);
+    window->move((desktop->width() - window->width())/2, (desktop->height() - window->height())/2);    
     // 移除最小化
     window->setWindowFlags((window->windowFlags() | Qt::CustomizeWindowHint) & ~Qt::WindowMinimizeButtonHint );
     // 不在任务栏显示
@@ -79,21 +79,29 @@ MyPlugin::MyPlugin(QObject *parent) :
         labelDate[i-1]->setAlignment(Qt::AlignCenter);
         layout->addWidget(labelDate[i-1],1,i-1);
         labelWImg[i-1] = new QLabel("");
+        /*
         QPixmap pixmap;
         pixmap.load(":/icon.ico");
         labelWImg[i-1]->setPixmap(pixmap);
         labelWImg[i-1]->setAlignment(Qt::AlignCenter);
+        */
+        QImage image;
+        image.load(":/images/0.png");
+        labelWImg[i-1]->setPixmap(QPixmap::fromImage(image.scaled(50,50)));
+        labelWImg[i-1]->setAlignment(Qt::AlignCenter);
+
         layout->addWidget(labelWImg[i-1],2,i-1);
-        labelWeather[i-1] = new QLabel("晴\n15°C ~ 20°C\n北风1级");
+        labelWeather[i-1] = new QLabel("晴\n15°C ~ 25°C\n北风1级");
         labelWeather[i-1]->setAlignment(Qt::AlignCenter);
         layout->addWidget(labelWeather[i-1],3,i-1);
     }
     window->setLayout(layout);
-
+    connect(m_mainWidget, &PluginWidget::requestContextMenu, this, &MyPlugin::requestContextMenu);
     //Timer
     m_refershTimer->setInterval(1800000);
     m_refershTimer->start();
     connect(m_refershTimer, &QTimer::timeout, this, &MyPlugin::update);
+
     update();
 }
 
@@ -128,12 +136,19 @@ QWidget *MyPlugin::itemTipsWidget(const QString &itemKey)
     return nullptr;
 }
 
+void MBAbout(){
+    qDebug("MBAbout");
+    QMessageBox aboutMB(QMessageBox::NoIcon, "天气预报 2.1", "关于\n\n深度Linux系统上一款在任务栏显示天气的插件。\n作者：黄颖\nE-mail: sonichy@163.com\n主页：sonichy.96.lt\n致谢：\nlinux028@deepin.org\n\n2.1 (2017-01-24)\n1.使用本地图标代替边缘有白色的网络图标，以适用深度15.4 Dock的深色主题。\n2.修复右键菜单，可以使用了。\n\n2.0 (2016-12-08)\n点击Dock弹出窗口显示7天预报。\n\n1.0 (2016-11-09)\n在深度Dock栏显示天气，鼠标悬浮泡泡显示实时天气。");
+    aboutMB.setIconPixmap(QPixmap(":/images/0.png"));
+    aboutMB.exec();
+}
+
 //点击响应
 const QString MyPlugin::itemCommand(const QString &itemKey)
 {
     Q_UNUSED(itemKey);
     window->hide();
-    window->move((desktop->width() - window->width())/2, (desktop->height() - window->height())/2);
+    window->move((desktop->width()-window->width())/2, (desktop->height()-window->height())/2);
     window->show();
     return "";
 }
@@ -149,11 +164,13 @@ const QString MyPlugin::itemContextMenu(const QString &itemKey)
     forecast["itemText"] = "预报";
     forecast["isActive"] = true;
     items.push_back(forecast);
+
     QMap<QString, QVariant> about;
     about["itemId"] = "about";
     about["itemText"] = "关于";
     about["isActive"] = true;
     items.push_back(about);
+
     QMap<QString, QVariant> menu;
     menu["items"] = items;
     menu["checkableMenu"] = false;
@@ -165,35 +182,24 @@ void MyPlugin::invokedMenuItem(const QString &itemKey, const QString &menuId, co
 {
     Q_UNUSED(itemKey);
     Q_UNUSED(checked);
-//    if (menuId == MenuIdOpenEyes) {
-//        QProcess::startDetached("xeyes");
-//    } else if (menuId == MenuIdCloseEyes) {
-//        QProcess::startDetached("killall xeyes");
-//    }
+
     QStringList menuitems;
     menuitems << "forecast" << "about" ;
     switch(menuitems.indexOf(menuId)){
     case 0:
-        qDebug() << "Menu:Forcast";
+        window->hide();
+        window->move((desktop->width()-window->width())/2, (desktop->height()-window->height())/2);
+    	window->show();
         break;
     case 1:
-        qDebug() << "Menu:About";
+        MBAbout();
         break;
     }
 }
 
-bool MyPlugin::eventFilter(QObject *watched, QEvent *event)
+void MyPlugin::requestContextMenu(const QString &itemKey)
 {
-    Q_UNUSED(watched);
-    Q_UNUSED(event);
-    //if (watched == label && event->type() == QEvent::MouseButtonPress) {
-     //   QMouseEvent *mouse = static_cast<QMouseEvent*>(event);
-       // if(mouse->button()==Qt::RightButton) {
-            m_proxyInter->requestContextMenu(this, "");
-            return true;
-        //}
-    //}
-    //return false;
+    m_proxyInter->requestContextMenu(this, itemKey);
 }
 
 //更新
@@ -293,6 +299,7 @@ void MyPlugin::update()
                 for(int i=1;i<8;i++){
                     labelDate[i-1]->setText(date.addDays(i-1).toString("M-d")+"\n"+date.addDays(i-1).toString("dddd"));
                     labelDate[i-1]->setAlignment(Qt::AlignCenter);
+/*
                     URLSTR="http://m.weather.com.cn/weather_img/"+ QString::number(weatherinfoObj.value("img"+QString::number(2*i-1)).toInt()) + ".gif";
                     url.setUrl(URLSTR);
                     reply = manager.get(QNetworkRequest(url));
@@ -302,6 +309,13 @@ void MyPlugin::update()
                     pixmap.loadFromData(reply->readAll());
                     labelWImg[i-1]->setPixmap(pixmap);
                     labelWImg[i-1]->setAlignment(Qt::AlignCenter);
+*/
+                    QImage image;
+                    URLSTR=":/images/"+ QString::number(weatherinfoObj.value("img"+QString::number(2*i-1)).toInt()) + ".png";
+                    image.load(URLSTR);
+                    labelWImg[i-1]->setPixmap(QPixmap::fromImage(image.scaled(50,50)));
+                    labelWImg[i-1]->setAlignment(Qt::AlignCenter);
+
                     labelWeather[i-1]->setText(weatherinfoObj.value("weather"+QString::number(i)).toString()+"\n"+weatherinfoObj.value("temp"+QString::number(i)).toString()+"\n"+weatherinfoObj.value("wind"+QString::number(i)).toString());
                     labelWeather[i-1]->setAlignment(Qt::AlignCenter);
                 }

@@ -10,9 +10,12 @@ TARGET = Weather
 TEMPLATE = lib
 CONFIG += plugin c++11
 
-SOURCES += myplugin.cpp
+SOURCES +=  myplugin.cpp\
+            pluginwidget.cpp
 
-HEADERS += myplugin.h
+HEADERS +=  myplugin.h\
+            pluginwidget.h
+
 DISTFILES += MyPlugin.json
 
 INCLUDEPATH += ../dde-dock/
