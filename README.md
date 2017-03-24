@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # WEATHER_DDE_DOCK 2.1
 ![alt](https://coding.net/u/sonichy/p/WEATHER_DDE_DOCK/git/raw/master/preview.png)  
 深度Linux系统天气任务栏插件。  
@@ -14,3 +15,12 @@
   
 1.0 (2016-11-09)  
 在深度Dock栏显示天气，鼠标悬浮泡泡显示实时天气。
+=======
+# WEATHER_DDE_DOCK
+<div align=center>
+<img src=https://github.com/sonichy/WEATHER_DDE_DOCK/blob/master/preview.png>
+</div>
+深度Linux系统天气任务栏插件。  
+安装：install.sh  
+卸载：uninstall.sh
+>>>>>>> ee69e7f2e5856481aa5f131a0220dbce2cb7f995

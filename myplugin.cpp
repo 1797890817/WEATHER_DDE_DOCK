@@ -2,6 +2,7 @@
 #include <QLabel>
 #include <QtNetwork>
 #include <QJsonDocument>
+<<<<<<< HEAD
 #include <QMouseEvent>
 #include <QDesktopWidget>
 #include <QApplication>
@@ -104,6 +105,28 @@ MyPlugin::MyPlugin(QObject *parent) :
     connect(m_refershTimer, &QTimer::timeout, this, &MyPlugin::update);
 
     update();
+=======
+#define MYPLUGIN_KEY    "myplugin"
+
+QString city="",cityId="",swtips="",temp="";
+
+MyPlugin::MyPlugin(QObject *parent) :
+    QObject(parent),
+    m_mainWidget(new QLabel),
+    m_tipsLabel(new QLabel),
+    m_refershTimer(new QTimer(this))
+{
+    QLabel *label = (QLabel *)m_mainWidget;
+    label->setText("天气\n温度");
+    label->setStyleSheet("color:white;padding:0px;");
+    label->setAlignment(Qt::AlignCenter);
+    //label->setFixedWidth(50);
+    m_tipsLabel->setStyleSheet("color:white;padding:5px;");
+    m_refershTimer->setInterval(1800000);
+    m_refershTimer->start();
+    connect(m_refershTimer, &QTimer::timeout, this, &MyPlugin::updateString);
+    updateString();
+>>>>>>> ee69e7f2e5856481aa5f131a0220dbce2cb7f995
 }
 
 //插件名
@@ -137,6 +160,7 @@ QWidget *MyPlugin::itemTipsWidget(const QString &itemKey)
     return nullptr;
 }
 
+<<<<<<< HEAD
 void MBAbout(){
     qDebug("MBAbout");
     QMessageBox aboutMB(QMessageBox::NoIcon, "天气预报 2.2", "关于\n\n深度Linux系统上一款在任务栏显示天气的插件。\n作者：黄颖\nE-mail: sonichy@163.com\n主页：sonichy.96.lt\n致谢：\nlinux028@deepin.org\n\n2.2 (2017-03-16)\n1.Dock自适应宽度。\n\n2.1 (2017-01-24)\n1.使用本地图标代替边缘有白色的网络图标，以适用深度15.4 Dock的深色主题。\n2.修复右键菜单，可以使用了。\n\n2.0 (2016-12-08)\n点击Dock弹出窗口显示7天预报。\n\n1.0 (2016-11-09)\n在深度Dock栏显示天气，鼠标悬浮泡泡显示实时天气。");
@@ -205,6 +229,9 @@ void MyPlugin::requestContextMenu(const QString &itemKey)
 
 //更新
 void MyPlugin::update()
+=======
+void MyPlugin::updateString()
+>>>>>>> ee69e7f2e5856481aa5f131a0220dbce2cb7f995
 {
     QString URLSTR = "http://int.dpool.sina.com.cn/iplookup/iplookup.php?format=json";
     QUrl url(URLSTR);
@@ -232,7 +259,10 @@ void MyPlugin::update()
                 if(city_value.isString())
                 {
                     city = city_value.toString();
+<<<<<<< HEAD
                     labelCity->setText(city);
+=======
+>>>>>>> ee69e7f2e5856481aa5f131a0220dbce2cb7f995
                 }
             }
         }
@@ -246,6 +276,10 @@ void MyPlugin::update()
     cityId = reply->readAll();
     qDebug() << URLSTR + " -> " << cityId;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> ee69e7f2e5856481aa5f131a0220dbce2cb7f995
     URLSTR="http://hao.weidunewtab.com/myapp/weather/data/indexInTime.php?cityID="+cityId;
     url.setUrl(URLSTR);
     reply = manager.get(QNetworkRequest(url));
@@ -264,6 +298,7 @@ void MyPlugin::update()
                 QJsonObject::iterator it;
                 it = obj.find("weatherinfo");
                 QJsonObject weatherinfoObj = it.value().toObject();
+<<<<<<< HEAD
                 swtips = weatherinfoObj.value("temp").toString() + "°C\n湿度：" + weatherinfoObj.value("SD").toString() + "\n" + weatherinfoObj.value("WD").toString() + weatherinfoObj.value("WS").toString() + "\nPM2.5：" + weatherinfoObj.value("pm25").toString() + "\n空气质量指数："+ QString::number(weatherinfoObj.value("aqiLevel").toInt()) + "\n刷新：" + currentDateTime.toString("HH:mm:ss");
                 temp=weatherinfoObj.value("temp").toString()+"°C";
                 labelTemp->setText(weatherinfoObj.value("temp").toString()+"°C");
@@ -272,10 +307,19 @@ void MyPlugin::update()
                 labelPM->setText("PM2.5\n" + weatherinfoObj.value("pm25").toString());
                 labelAQI->setText("空气质量指数\n" + QString::number(weatherinfoObj.value("aqiLevel").toInt()));
                 labelRT->setText("刷新\n" + currentDateTime.toString("HH:mm:ss"));
+=======
+                swtips = "城市："+weatherinfoObj.value("city").toString()+"\n温度："+weatherinfoObj.value("temp").toString()+"°C\n湿度："+weatherinfoObj.value("SD").toString()+"\n风力："+weatherinfoObj.value("WD").toString()+weatherinfoObj.value("WS").toString()+"\nPM2.5："+weatherinfoObj.value("pm25").toString()+"\n空气质量指数："+ QString::number(weatherinfoObj.value("aqiLevel").toInt())+"\n刷新："+currentDateTime.toString("HH:mm:ss");
+                m_tipsLabel->setText(swtips);
+                temp=weatherinfoObj.value("temp").toString()+"°C";
+>>>>>>> ee69e7f2e5856481aa5f131a0220dbce2cb7f995
             }
         }
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> ee69e7f2e5856481aa5f131a0220dbce2cb7f995
     URLSTR="http://hao.weidunewtab.com/myapp/weather/data/index.php?cityID="+cityId;
     url.setUrl(URLSTR);
     reply = manager.get(QNetworkRequest(url));
@@ -283,6 +327,10 @@ void MyPlugin::update()
     loop.exec();
     codeContent = reply->readAll();
     qDebug() << URLSTR + " -> " << codeContent;
+<<<<<<< HEAD
+=======
+
+>>>>>>> ee69e7f2e5856481aa5f131a0220dbce2cb7f995
     parse_doucment = QJsonDocument::fromJson(codeContent.toLatin1(), &json_error);
     if(json_error.error == QJsonParseError::NoError)
     {
@@ -293,6 +341,7 @@ void MyPlugin::update()
                 QJsonObject::iterator it;
                 it = obj.find("weatherinfo");
                 QJsonObject weatherinfoObj = it.value().toObject();
+<<<<<<< HEAD
                 sw1 = weatherinfoObj.value("weather1").toString();
                 QLabel *label = (QLabel *)m_mainWidget;
                 label->setText(sw1+"\n"+temp);
@@ -328,4 +377,12 @@ void MyPlugin::update()
 
     m_tipsLabel->setText(city+"\n"+sw1+"\n"+swtips);
 
+=======
+                QString sw1 = weatherinfoObj.value("weather1").toString();
+                QLabel *label = (QLabel *)m_mainWidget;
+                label->setText(sw1+"\n"+temp);
+            }
+        }
+    }
+>>>>>>> ee69e7f2e5856481aa5f131a0220dbce2cb7f995
 }
