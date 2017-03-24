@@ -1,6 +1,6 @@
-# WEATHER_DDE_DOCK 2.1
+# WEATHER_DDE_DOCK
 ![alt](preview.png)  
-深度 Linux 系统天气任务栏插件。  
+深度 Linux 系统天气任务栏插件（Qt环境）。  
 安装：install.sh  
 卸载：uninstall.sh  
   
