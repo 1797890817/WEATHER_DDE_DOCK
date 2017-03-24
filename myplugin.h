@@ -8,10 +8,7 @@
 #include "interfaces/pluginsiteminterface.h"
 #include "interfaces/pluginproxyinterface.h"
 
-<<<<<<< HEAD
 #include "pluginwidget.h"
-=======
->>>>>>> ee69e7f2e5856481aa5f131a0220dbce2cb7f995
 
 class MyPlugin : public QObject, public PluginsItemInterface
 {
@@ -21,7 +18,6 @@ class MyPlugin : public QObject, public PluginsItemInterface
 
 public:
     MyPlugin(QObject *parent = 0);
-<<<<<<< HEAD
     //Dock接口函数
     const QString pluginName() const;
     void init(PluginProxyInterface *proxyInter);
@@ -39,22 +35,6 @@ private slots:
 private:
     //QWidget *m_mainWidget;
     PluginWidget *m_mainWidget;
-=======
-
-    //Dock接口函数
-    const QString pluginName() const;
-    void init(PluginProxyInterface *proxyInter);
-    QWidget *itemWidget(const QString &itemKey);
-
-    //
-    QWidget *itemTipsWidget(const QString &itemKey);
-
-private slots:
-    void updateString();
-
-private:
-    QWidget *m_mainWidget;
->>>>>>> ee69e7f2e5856481aa5f131a0220dbce2cb7f995
     QLabel *m_tipsLabel;
     QTimer *m_refershTimer;
 };
